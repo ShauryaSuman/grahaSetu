@@ -122,13 +122,13 @@ export const Footer: React.FC = () => {
               </li>
               <li className="flex items-start space-x-3">
                 <Phone className="h-5 w-5 text-primary-400 mt-0.5" />
-                <span className="text-gray-300">+91 9876 543 210</span>
+                <span className="text-gray-300">+91-8958704391</span>
               </li>
               <li className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-primary-400 mt-0.5" />
                 <span className="text-gray-300">
-                  123 Cosmic Avenue, Varanasi, 
-                  Uttar Pradesh, India - 221001
+                  Anantya Vatika, Bulandshahr, 
+                  Uttar Pradesh, India - 203001
                 </span>
               </li>
             </ul>

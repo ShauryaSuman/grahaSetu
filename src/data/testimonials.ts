@@ -1,4 +1,5 @@
 export interface Testimonial {
+  id: number;
   name: string;
   avatar: string;
   location: string;
@@ -9,6 +10,7 @@ export interface Testimonial {
 
 export const testimonials: Testimonial[] = [
   {
+    id: 1,
     name: "Vandana",
     avatar: "https://images.pexels.com/photos/3760583/pexels-photo-3760583.jpeg?auto=compress&cs=tinysrgb&w=100",
     location: "Uttar Pradesh, India",
@@ -17,6 +19,7 @@ export const testimonials: Testimonial[] = [
     service: "Birth Chart & Career Analysis"
   },
   {
+    id: 2,
     name: "Priyanka",
     avatar: "https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=100",
     location: "Delhi, India",
@@ -25,6 +28,7 @@ export const testimonials: Testimonial[] = [
     service: "Relationship Compatibility"
   },
   {
+    id: 3,
     name: "Shalini",
     avatar: "https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=100",
     location: "Bangalore, India",
@@ -33,7 +37,8 @@ export const testimonials: Testimonial[] = [
     service: "Muhurta & Business Consultation"
   },
   {
-    name: "Sandeep",
+    id: 4,
+    name: "Rakesh",
     avatar: "https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=100",
     location: "Pune, India",
     text: "The transit predictions were incredibly accurate. They prepared me for a challenging period at work and guided me through it with specific recommendations. I was able to turn potential setbacks into opportunities because I was prepared.",
@@ -41,6 +46,7 @@ export const testimonials: Testimonial[] = [
     service: "Transit Predictions"
   },
   {
+    id: 5,
     name: "Naveen",
     avatar: "https://images.pexels.com/photos/1587009/pexels-photo-1587009.jpeg?auto=compress&cs=tinysrgb&w=100",
     location: "Chennai, India",

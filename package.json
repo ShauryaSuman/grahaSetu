@@ -14,11 +14,13 @@
   },
   "dependencies": {
     "@stripe/stripe-js": "^2.4.0",
+    "@types/smoothscroll-polyfill": "^0.3.4",
     "gh-pages": "^6.3.0",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.22.3"
+    "react-router-dom": "^6.22.3",
+    "smoothscroll-polyfill": "^0.4.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",

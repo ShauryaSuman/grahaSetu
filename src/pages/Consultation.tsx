@@ -7,20 +7,41 @@ import {
   User, 
   MessageSquare, 
   Star,
-  CheckCircle
+  CheckCircle,
+  MapPin, 
+  Gift 
 } from 'lucide-react';
 
+// Define cosmic-themed colors for enhanced aesthetics
+const cosmicColors = {
+  primary: 'text-indigo-600', // Stronger primary text color
+  secondary: 'text-purple-600',
+  background: 'bg-gray-900', // Dark background for the page
+  card: 'bg-white',           // LIGHT card background
+  accent: 'text-yellow-600',  // Stronger accent color
+  darkText: 'text-gray-800', // Dark text for use on light cards
+};
+
+// Custom input field styles for dark theme
+// Updated input class for light background (bg-gray-50) and dark text (text-gray-800)
+const inputClass = "w-full p-3 pl-10 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 placeholder-gray-500 focus:ring-indigo-600 focus:border-indigo-600 transition duration-300 shadow-inner";
+const selectClass = "w-full p-3 pl-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 focus:ring-indigo-600 focus:border-indigo-600 transition duration-300 shadow-inner appearance-none";
+const iconWrapperClass = "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none";
+
 export const Consultation: React.FC = () => {
-  const [selectedService, setSelectedService] = useState('');
+  const [selectedServiceId, setSelectedServiceId] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); 
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    birthDetails: '',
+    dob: '',      
+    tob: '',      
+    pob: '',      
+    message: '',
     date: '',
     time: '',
-    message: '',
   });
 
   const services = [
@@ -68,8 +89,10 @@ export const Consultation: React.FC = () => {
     },
   ];
 
+  const selectedService = services.find(s => s.id === selectedServiceId);
+
   const handleServiceSelect = (serviceId: string) => {
-    setSelectedService(serviceId);
+    setSelectedServiceId(serviceId);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -79,140 +102,148 @@ export const Consultation: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', { service: selectedService, ...formData });
-    setFormSubmitted(true);
+    setIsLoading(true);
+    // Simulate API call delay
+    setTimeout(() => {
+        console.log('Form submitted:', { service: selectedServiceId, ...formData });
+        setIsLoading(false);
+        setFormSubmitted(true);
+    }, 1500);
   };
 
   return (
-    <div className="pt-24 pb-16">
+    // Set a deep, dark cosmic background for the whole page
+    <div className={`min-h-screen ${cosmicColors.background} pt-24 pb-16`}>
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl text-orange-500 font-bold mb-4">
-            Book a Consultation
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-500">
+            The Guide You Need. Today.
           </h1>
-          <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-            Connect with our expert Vedic astrologers for personalized guidance on your life's journey
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+            Connect directly with our astrologer to ask your specific questions and get clear, actionable advice.
           </p>
         </div>
 
         {formSubmitted ? (
-          <div className="max-w-2xl mx-auto">
-            <div className="card text-center p-8">
+          <div className="max-w-2xl mx-auto animate-fadeIn">
+            <div className={`${cosmicColors.card} text-center p-10 rounded-2xl shadow-2xl shadow-indigo-500/20`}>
               <div className="flex justify-center mb-6">
-                <div className="w-20 h-20 rounded-full bg-success-500/20 flex items-center justify-center">
-                  <CheckCircle className="w-10 h-10 text-success-500" />
+                <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center animate-pulse-slow">
+                  <CheckCircle className="w-10 h-10 text-green-600" />
                 </div>
               </div>
               
-              <h2 className="text-2xl font-display font-semibold text-white mb-4">
+              <h2 className={`text-3xl font-bold ${cosmicColors.darkText} mb-4`}>
                 Consultation Request Received!
               </h2>
               
-              <p className="text-gray-300 mb-6">
-                Thank you for booking a consultation with GrahaSetu. We have received your request and will contact you within 24 hours to confirm your appointment and provide payment instructions.
+              <p className="text-gray-600 mb-6">
+                Thank you for booking with GrahaSetu. We will prioritize your request and contact you within 24 hours to confirm your appointment and provide payment instructions.
               </p>
               
-              <p className="text-gray-300 mb-8">
-                A confirmation email has been sent to <span className="text-primary-400">{formData.email}</span> with your booking details.
+              <p className="text-gray-600 mb-8">
+                Confirmation sent to: <span className="text-indigo-600 font-medium">{formData.email}</span>
               </p>
               
               <button
                 onClick={() => setFormSubmitted(false)}
-                className="btn btn-secondary"
+                className="w-full btn bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-xl transition duration-300 shadow-lg shadow-purple-500/30"
               >
                 Book Another Consultation
               </button>
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {/* Services Selection */}
-            <div className="lg:col-span-1">
-              <div className="bg-cosmic-navy p-6 rounded-xl sticky top-24">
-                <h2 className="text-xl font-semibold text-white mb-6">
-                  Our Services
+          <div className="flex flex-col gap-10 max-w-7xl mx-auto">
+            
+            {/* 1. Services Selection Panel (Horizontal Scroll) */}
+            <div className="w-full">
+              {/* Light card background for service selection */}
+              <div className={`${cosmicColors.card} p-8 rounded-2xl shadow-2xl shadow-indigo-500/10`}>
+                <h2 className={`text-3xl font-semibold ${cosmicColors.darkText} mb-6 border-b border-gray-200 pb-3 flex items-center`}>
+                  <Gift className={`w-6 h-6 ${cosmicColors.accent} mr-3`} />
+                  Choose Your Service
                 </h2>
                 
-                <div className="space-y-4">
-                  {services.map((service) => (
-                    <div
-                      key={service.id}
-                      onClick={() => handleServiceSelect(service.id)}
-                      className={`p-4 rounded-lg cursor-pointer transition-all ${
-                        selectedService === service.id
-                          ? 'bg-primary-700/50 border-2 border-primary-500'
-                          : 'bg-cosmic-purple/20 hover:bg-cosmic-purple/30 border-2 border-transparent'
-                      }`}
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="text-white font-medium">{service.name}</h3>
-                        <span className="text-primary-400 font-semibold">{service.price}</span>
-                      </div>
-                      <div className="flex items-center text-gray-400 text-sm mb-2">
-                        <Clock className="w-4 h-4 mr-1" />
-                        <span>{service.duration}</span>
-                      </div>
-                      <p className="text-gray-300 text-sm">
-                        {service.description}
-                      </p>
-                    </div>
-                  ))}
+                {/* HORIZONTAL SCROLL CONTAINER */}
+                <div 
+                  className="flex space-x-6 overflow-x-auto pb-4"
+                >
+                    {services.map((service) => (
+                        <div
+                          key={service.id}
+                          onClick={() => handleServiceSelect(service.id)}
+                          // Cards start white, hover becomes light gray
+                          className={`flex-shrink-0 w-72 md:w-80 p-5 rounded-xl cursor-pointer transition-all duration-300 transform hover:scale-[1.03] ${
+                            selectedServiceId === service.id
+                              ? 'bg-indigo-100 border-2 border-indigo-600 shadow-lg shadow-indigo-500/20'
+                              : 'bg-white hover:bg-gray-50 border border-gray-200'
+                          }`}
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            <h3 className={`font-bold text-lg ${cosmicColors.darkText}`}>{service.name}</h3>
+                            <span className={`${cosmicColors.accent} font-extrabold text-lg`}>{service.price}</span>
+                          </div>
+                          <div className="flex items-center text-gray-500 text-sm mb-2">
+                            <Clock className={`w-4 h-4 mr-1 ${cosmicColors.secondary}`} />
+                            <span>{service.duration}</span>
+                          </div>
+                          <p className="text-gray-600 text-sm">
+                            {service.description}
+                          </p>
+                        </div>
+                    ))}
                 </div>
                 
-                <div className="mt-6 p-4 bg-cosmic-purple/20 rounded-lg">
-                  <p className="text-sm text-gray-300 flex items-start">
-                    <Star className="w-4 h-4 text-cosmic-gold mr-2 flex-shrink-0 mt-0.5" />
-                    <span>All consultations include a personalized report and follow-up support for 7 days.</span>
+                {/* Information box at the bottom (still uses dark background for contrast) */}
+                <div className="mt-8 p-4 bg-gray-100 rounded-xl border border-indigo-200">
+                  <p className="text-sm text-gray-700 flex items-start">
+                    <Star className={`w-5 h-5 ${cosmicColors.accent} mr-2 flex-shrink-0 mt-0.5 animate-pulse`} />
+                    <span className="leading-tight">All consultations include a personalized report and 7 days of follow-up support.</span>
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Booking Form */}
-            <div className="lg:col-span-2">
-              <div className="card shadow-2xl">
-                <h2 className="text-2xl font-semibold text-orange-500 mb-6">
-                  Book Your Session
+            {/* 2. Booking Form (Below the Grid) */}
+            <div className="w-full">
+              {/* Light card background for the form */}
+              <div className={`${cosmicColors.card} p-8 rounded-2xl shadow-2xl shadow-purple-500/20`}>
+                <h2 className={`text-3xl font-semibold ${cosmicColors.darkText} mb-6 border-b border-gray-200 pb-3`}>
+                  Submit Your Details
                 </h2>
                 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Selected Service */}
-                  <div>
-                    <label 
-                      htmlFor="service" 
-                      className="block text-sm font-medium text-gray-500 mb-1"
-                    >
-                      Select Service*
-                    </label>
-                    <select
-                      id="service"
-                      name="service"
-                      value={selectedService}
-                      onChange={(e) => handleServiceSelect(e.target.value)}
-                      className="input-field"
-                      required
-                    >
-                      <option value="">Choose a service</option>
-                      {services.map((service) => (
-                        <option key={service.id} value={service.id}>
-                          {service.name} - {service.price}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  
+                  {/* Selected Service Confirmation Block */}
+                  {selectedService ? (
+                    <div className="p-4 bg-indigo-50 border border-indigo-300 rounded-xl text-gray-800">
+                        <p className="text-sm font-semibold mb-1 flex items-center">
+                            <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
+                            Selected Service:
+                        </p>
+                        <p className="text-lg font-bold">
+                            {selectedService.name} - <span className={cosmicColors.accent}>{selectedService.price}</span>
+                        </p>
+                    </div>
+                  ) : (
+                    <div className="p-4 bg-yellow-50 border border-yellow-300 rounded-xl text-yellow-800">
+                        Please select a consultation service from the cards above to proceed with booking.
+                    </div>
+                  )}
 
                   {/* Personal Information */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label 
                         htmlFor="name" 
-                        className="block text-sm font-medium text-gray-300 mb-1"
+                        className={`block text-sm font-medium ${cosmicColors.darkText} mb-1`}
                       >
                         Full Name*
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <User className="h-5 w-5 text-gray-500" />
+                        <div className={iconWrapperClass}>
+                          <User className={`h-5 w-5 ${cosmicColors.primary}`} />
                         </div>
                         <input
                           type="text"
@@ -220,7 +251,7 @@ export const Consultation: React.FC = () => {
                           name="name"
                           value={formData.name}
                           onChange={handleInputChange}
-                          className="input-field pl-10"
+                          className={inputClass}
                           placeholder="Your full name"
                           required
                         />
@@ -230,13 +261,13 @@ export const Consultation: React.FC = () => {
                     <div>
                       <label 
                         htmlFor="email" 
-                        className="block text-sm font-medium text-gray-500 mb-1"
+                        className={`block text-sm font-medium ${cosmicColors.darkText} mb-1`}
                       >
                         Email Address*
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Mail className="h-5 w-5 text-gray-500" />
+                        <div className={iconWrapperClass}>
+                          <Mail className={`h-5 w-5 ${cosmicColors.primary}`} />
                         </div>
                         <input
                           type="email"
@@ -244,7 +275,7 @@ export const Consultation: React.FC = () => {
                           name="email"
                           value={formData.email}
                           onChange={handleInputChange}
-                          className="input-field pl-10"
+                          className={inputClass}
                           placeholder="your.email@example.com"
                           required
                         />
@@ -252,17 +283,98 @@ export const Consultation: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Birth Details Section */}
+                  <div className="pt-4 border-t border-gray-200">
+                      <h3 className={`text-xl font-semibold ${cosmicColors.primary} mb-4`}>Your Natal Details</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {/* Date of Birth */}
+                        <div>
+                          <label 
+                            htmlFor="dob" 
+                            className={`block text-sm font-medium ${cosmicColors.darkText} mb-1`}
+                          >
+                            Date of Birth*
+                          </label>
+                          <div className="relative">
+                            <div className={iconWrapperClass}>
+                              <Calendar className={`h-5 w-5 ${cosmicColors.secondary}`} />
+                            </div>
+                            <input
+                              type="date"
+                              id="dob"
+                              name="dob"
+                              value={formData.dob}
+                              onChange={handleInputChange}
+                              className={inputClass}
+                              required
+                            />
+                          </div>
+                        </div>
+                        
+                        {/* Time of Birth */}
+                        <div>
+                          <label 
+                            htmlFor="tob" 
+                            className={`block text-sm font-medium ${cosmicColors.darkText} mb-1`}
+                          >
+                            Time of Birth*
+                          </label>
+                          <div className="relative">
+                            <div className={iconWrapperClass}>
+                              <Clock className={`h-5 w-5 ${cosmicColors.secondary}`} />
+                            </div>
+                            <input
+                              type="time"
+                              id="tob"
+                              name="tob"
+                              value={formData.tob}
+                              onChange={handleInputChange}
+                              className={inputClass}
+                              required
+                            />
+                          </div>
+                        </div>
+
+                         {/* Place of Birth */}
+                        <div>
+                          <label 
+                            htmlFor="pob" 
+                            className={`block text-sm font-medium ${cosmicColors.darkText} mb-1`}
+                          >
+                            Place of Birth*
+                          </label>
+                          <div className="relative">
+                            <div className={iconWrapperClass}>
+                              <MapPin className={`h-5 w-5 ${cosmicColors.secondary}`} />
+                            </div>
+                            <input
+                              type="text"
+                              id="pob"
+                              name="pob"
+                              value={formData.pob}
+                              onChange={handleInputChange}
+                              className={inputClass}
+                              placeholder="City, State, Country"
+                              required
+                            />
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+
+
+                  {/* Phone Number & Preferred Schedule */}
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
                       <label 
                         htmlFor="phone" 
-                        className="block text-sm font-medium text-gray-500 mb-1"
+                        className={`block text-sm font-medium ${cosmicColors.darkText} mb-1`}
                       >
                         Phone Number*
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <PhoneCall className="h-5 w-5 text-gray-500" />
+                        <div className={iconWrapperClass}>
+                          <PhoneCall className={`h-5 w-5 ${cosmicColors.primary}`} />
                         </div>
                         <input
                           type="tel"
@@ -270,44 +382,22 @@ export const Consultation: React.FC = () => {
                           name="phone"
                           value={formData.phone}
                           onChange={handleInputChange}
-                          className="input-field pl-10"
+                          className={inputClass}
                           placeholder="+91 9876543210"
                           required
                         />
                       </div>
                     </div>
-                    
-                    <div>
-                      <label 
-                        htmlFor="birthDetails" 
-                        className="block text-sm font-medium text-gray-500 mb-1"
-                      >
-                        Birth Details
-                      </label>
-                      <input
-                        type="text"
-                        id="birthDetails"
-                        name="birthDetails"
-                        value={formData.birthDetails}
-                        onChange={handleInputChange}
-                        className="input-field"
-                        placeholder="Date, Time, Place (if known)"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Preferred Schedule */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label 
                         htmlFor="date" 
-                        className="block text-sm font-medium text-gray-500 mb-1"
+                        className={`block text-sm font-medium ${cosmicColors.darkText} mb-1`}
                       >
-                        Preferred Date*
+                        Preferred Consultation Date*
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Calendar className="h-5 w-5 text-gray-500" />
+                        <div className={iconWrapperClass}>
+                          <Calendar className={`h-5 w-5 ${cosmicColors.primary}`} />
                         </div>
                         <input
                           type="date"
@@ -315,7 +405,7 @@ export const Consultation: React.FC = () => {
                           name="date"
                           value={formData.date}
                           onChange={handleInputChange}
-                          className="input-field pl-10"
+                          className={inputClass}
                           required
                         />
                       </div>
@@ -324,13 +414,13 @@ export const Consultation: React.FC = () => {
                     <div>
                       <label 
                         htmlFor="time" 
-                        className="block text-sm font-medium text-gray-500 mb-1"
+                        className={`block text-sm font-medium ${cosmicColors.darkText} mb-1`}
                       >
-                        Preferred Time*
+                        Preferred Consultation Time*
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Clock className="h-5 w-5 text-gray-500" />
+                        <div className={iconWrapperClass}>
+                          <Clock className={`h-5 w-5 ${cosmicColors.primary}`} />
                         </div>
                         <input
                           type="time"
@@ -338,7 +428,7 @@ export const Consultation: React.FC = () => {
                           name="time"
                           value={formData.time}
                           onChange={handleInputChange}
-                          className="input-field pl-10"
+                          className={inputClass}
                           required
                         />
                       </div>
@@ -349,40 +439,52 @@ export const Consultation: React.FC = () => {
                   <div>
                     <label 
                       htmlFor="message" 
-                      className="block text-sm font-medium text-gray-500 mb-1"
+                      className={`block text-sm font-medium ${cosmicColors.darkText} mb-1`}
                     >
                       Your Questions or Concerns
                     </label>
                     <div className="relative">
                       <div className="absolute top-3 left-3 flex items-start pointer-events-none">
-                        <MessageSquare className="h-5 w-5 text-gray-500" />
+                        <MessageSquare className={`h-5 w-5 ${cosmicColors.primary}`} />
                       </div>
                       <textarea
                         id="message"
                         name="message"
                         value={formData.message}
                         onChange={handleInputChange}
-                        className="input-field pl-10 h-32"
+                        className={`${inputClass} pl-10 h-32 resize-none`}
                         placeholder="Please share any specific questions or areas you'd like to focus on during your consultation..."
                       ></textarea>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-cosmic-navy rounded-lg text-sm text-gray-300">
-                    <p className="mb-2">By booking a consultation, you agree to our terms and conditions:</p>
+                  {/* Note box (dark background for contrast against light form card) */}
+                  <div className="p-4 bg-gray-100 rounded-xl text-sm text-gray-600 border border-gray-200">
+                    <p className={`mb-2 font-semibold ${cosmicColors.darkText}`}>Important Notes:</p>
                     <ul className="list-disc pl-5 space-y-1">
-                      <li>Payment is required in advance to confirm your booking</li>
-                      <li>Rescheduling is available with 24 hours' notice</li>
-                      <li>Consultations are conducted via Zoom or phone call</li>
-                      <li>All information shared is kept strictly confidential</li>
+                      <li>Payment is required in advance to confirm your booking.</li>
+                      <li>Rescheduling is available with 24 hours' notice.</li>
+                      <li>Consultations are conducted via Zoom or phone call.</li>
+                      <li>All information shared is kept strictly confidential.</li>
                     </ul>
                   </div>
 
                   <button 
                     type="submit" 
-                    className="btn btn-primary w-full"
+                    className="w-full btn bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-lg py-4 rounded-xl transition duration-300 shadow-xl shadow-indigo-500/40 transform hover:scale-[1.01] disabled:opacity-50 flex items-center justify-center"
+                    disabled={!selectedServiceId || isLoading}
                   >
-                    Book Consultation
+                    {isLoading ? (
+                        <>
+                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Processing Request...
+                        </>
+                    ) : (
+                        selectedServiceId ? 'Finalize Booking and Request Payment Link' : 'Select a Service to Continue'
+                    )}
                   </button>
                 </form>
               </div>
@@ -393,3 +495,5 @@ export const Consultation: React.FC = () => {
     </div>
   );
 };
+
+export default Consultation;
